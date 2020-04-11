@@ -3,6 +3,8 @@ package com.meetntrain.moviesapp.common.utils
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -14,17 +16,21 @@ import kotlinx.coroutines.launch
  * @param apiCall a suspend function called from the injected repository that would return our data
  * @param data the live data object that would be updated in the view model and observed in the view
  * @param isLoading a boolean indicating the loading state
+ * @param channel a conflated broadcast channel that will send/offer the value obtained from the api , this channel is the state provider for our view data , loading state and error states will be pushed on that channel
  */
+@ExperimentalCoroutinesApi
 fun <T> CoroutineScope.launchViewModelCoroutineWithLoading(
     apiCall: suspend () -> Flow<T>,
     data: MutableLiveData<T>,
-    isLoading: MutableLiveData<Boolean>
+    isLoading: MutableLiveData<Boolean>,
+    channel: ConflatedBroadcastChannel<T>
 ) {
     this.launch {
         isLoading.postValue(true)
         apiCall.invoke()
             .collect { responseData ->
                 data.postValue(responseData)
+                channel.offer(responseData)
             }
         isLoading.postValue(false)
     }

@@ -7,49 +7,55 @@ import androidx.lifecycle.viewModelScope
 import com.meetntrain.moviesapp.common.model.Movie
 import com.meetntrain.moviesapp.common.repo.MoviesRepo
 import com.meetntrain.moviesapp.common.utils.launchViewModelCoroutineWithLoading
+import com.meetntrain.moviesapp.common.view_model.State
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.channels.consume
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-@ObsoleteCoroutinesApi
+@FlowPreview
 @ExperimentalCoroutinesApi
 class MoviesViewModel(private val repo: MoviesRepo) : ViewModel() {
     //TODO: handle errors
-    // TODO : implement different states of the view model (sealed class + channel that will broadcast the latest state the view model has reached
-    //TODO: there will only be one live data representing the state
-    //TODO: we will decide what to do with a when statement
-
-
     val moviesLiveData: MutableLiveData<List<Movie>> = MutableLiveData()
     val loadingLiveData: MutableLiveData<Boolean> = MutableLiveData()
-    @ExperimentalCoroutinesApi
-    val channel: ConflatedBroadcastChannel<List<Movie>> = ConflatedBroadcastChannel()
+    private val channel: ConflatedBroadcastChannel<State> = ConflatedBroadcastChannel()
 
     init {
         updateView(channel)
     }
 
-
-    @ExperimentalCoroutinesApi
     fun getAllMovies() {
         viewModelScope.launchViewModelCoroutineWithLoading(
             apiCall = suspend { repo.getMovies() },
-            data = moviesLiveData,
-            isLoading = loadingLiveData,
             channel = channel
         )
     }
 
-    @ObsoleteCoroutinesApi
-    @ExperimentalCoroutinesApi
-    fun updateView(channel: ConflatedBroadcastChannel<List<Movie>>) {
+    private fun updateView(channel: ConflatedBroadcastChannel<State>) {
         viewModelScope.launch {
-            channel.consume {
-                Log.d("channel", this.receive()[0].title)
+            channel.asFlow().collect {
+                when (it) {
+                    is State.LoadingState -> if (it.isLoading) {
+                        Log.d("status", "loading")
+                        loadingLiveData.postValue(true)
+                    } else {
+                        Log.d("status", "done")
+                        loadingLiveData.postValue(false)
+                    }
+                    is State.PresentingState<*> -> {
+                        val data = it.data as List<Movie>
+                        Log.d("status", data[0].title)
+                        moviesLiveData.postValue(data)
+                    }
+                }
             }
         }
+
     }
 
 

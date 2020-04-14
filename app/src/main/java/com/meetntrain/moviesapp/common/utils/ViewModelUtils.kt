@@ -1,14 +1,13 @@
 package com.meetntrain.moviesapp.common.utils
 
 import android.view.View
-import androidx.lifecycle.MutableLiveData
 import com.meetntrain.moviesapp.common.view_model.State
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
 
 /**
@@ -25,11 +24,11 @@ fun <T> CoroutineScope.launchViewModelCoroutineWithLoading(
 ) {
     this.launch {
         channel.offer(State.LoadingState(true))
-        apiCall.invoke().onCompletion {
-            channel.offer(State.LoadingState(false))
-        }
+        apiCall.invoke()
             .collect { responseData ->
                 channel.offer(State.PresentingState(responseData))
+                delay(100)
+                channel.offer(State.LoadingState(false))
             }
     }
 }

@@ -1,4 +1,4 @@
-package com.meetntrain.moviesapp.features.popular_movies
+package com.meetntrain.moviesapp.features.popular_movies.popular_movies
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

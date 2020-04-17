@@ -2,9 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="#f6f6f6"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".features.popular_movies.MoviesActivity">
+    tools:context=".features.popular_movies.popular_movies.MoviesActivity">
 
     <ProgressBar
         android:id="@+id/progress_bar"
@@ -16,5 +17,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_movies"
+        android:padding="20dp"
+        android:clipToPadding="false"
+        tools:listitem="@layout/item_movie"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </androidx.recyclerview.widget.RecyclerView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

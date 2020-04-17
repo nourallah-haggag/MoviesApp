@@ -9,7 +9,6 @@ import com.meetntrain.moviesapp.R
 import com.meetntrain.moviesapp.common.model.Movie
 import com.meetntrain.moviesapp.common.utils.toggleLoadingState
 import com.meetntrain.moviesapp.common.view_model.State
-import com.meetntrain.moviesapp.features.popular_movies.popular_movies.list.MoviesAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -17,12 +16,13 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @ExperimentalCoroutinesApi
 @FlowPreview
-class MoviesActivity : AppCompatActivity() {
+class MoviesActivity : AppCompatActivity(), MoviesListAdapter.Interaction {
 
     private val moviesViewModel: MoviesViewModel by viewModel()
+    private lateinit var moviesList: MutableList<Movie>
 
     // recycler view
-    private lateinit var moviesAdapter: MoviesAdapter
+    private lateinit var moviesAdapter: MoviesListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +39,6 @@ class MoviesActivity : AppCompatActivity() {
                     data.apply {
                         setupMoviesRecyclerView(this)
                     }
-                    Toast.makeText(this, data[0].overview, Toast.LENGTH_SHORT).show()
                     Log.d("hi", data[0].overview)
                 }
             }
@@ -50,7 +49,21 @@ class MoviesActivity : AppCompatActivity() {
 
     // recycler view setup
     private fun setupMoviesRecyclerView(moviesList: List<Movie>) {
-        moviesAdapter = MoviesAdapter(moviesList)
+        moviesAdapter =
+            MoviesListAdapter(
+                this
+            )
         rv_movies.adapter = moviesAdapter
+        this.moviesList = moviesList.toMutableList()
+        moviesAdapter.swapData(moviesList)
+    }
+
+    override fun remove(position: Int) {
+        moviesList.removeAt(position)
+        moviesAdapter.swapData(moviesList)
+    }
+
+    override fun addToFavs(position: Int) {
+        Toast.makeText(this , "${moviesList[position].title} added to favs" , Toast.LENGTH_SHORT).show()
     }
 }

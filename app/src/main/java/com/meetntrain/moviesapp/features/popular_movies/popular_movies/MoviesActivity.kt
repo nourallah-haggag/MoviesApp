@@ -5,10 +5,13 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.RecyclerView
 import com.meetntrain.moviesapp.R
 import com.meetntrain.moviesapp.common.model.Movie
 import com.meetntrain.moviesapp.common.utils.toggleLoadingState
 import com.meetntrain.moviesapp.common.view_model.State
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -54,6 +57,19 @@ class MoviesActivity : AppCompatActivity(), MoviesListAdapter.Interaction {
                 this
             )
         rv_movies.adapter = moviesAdapter
+        rv_movies.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+        rv_movies.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy > 0) {
+                    // scrolled down
+                    moviesAdapter.scrollDirection = MoviesListAdapter.ScrollDirection.DOWN
+                } else {
+                    moviesAdapter.scrollDirection = MoviesListAdapter.ScrollDirection.UP
+                }
+            }
+        })
+
         this.moviesList = moviesList.toMutableList()
         moviesAdapter.swapData(moviesList)
     }
@@ -64,6 +80,7 @@ class MoviesActivity : AppCompatActivity(), MoviesListAdapter.Interaction {
     }
 
     override fun addToFavs(position: Int) {
-        Toast.makeText(this , "${moviesList[position].title} added to favs" , Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "${moviesList[position].title} added to favs", Toast.LENGTH_SHORT)
+            .show()
     }
 }

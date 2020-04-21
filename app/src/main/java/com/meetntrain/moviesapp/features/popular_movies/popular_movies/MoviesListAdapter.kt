@@ -173,7 +173,10 @@ class MoviesListAdapter(private val interaction: Interaction? = null) :
             if (oldItem is Movie && newItem is Movie)
                 return oldItem.title == newItem.title
             else
-                return false
+                if (oldItem is Actor && newItem is Actor)
+                    return oldItem.name == newItem.name
+                else
+                    return false
         }
 
         override fun areContentsTheSame(
@@ -183,6 +186,9 @@ class MoviesListAdapter(private val interaction: Interaction? = null) :
             if (oldItem is Movie && newItem is Movie)
 
                 return (oldItem.title == newItem.title && oldItem.overview == newItem.overview && oldItem.image == newItem.image && oldItem.voteAverage == newItem.voteAverage)
+            else if (oldItem is Actor && newItem is Actor)
+                return (oldItem.name == newItem.name && oldItem.knownFor == newItem.knownFor
+                        && oldItem.img == newItem.img)
             else
                 return false
         }

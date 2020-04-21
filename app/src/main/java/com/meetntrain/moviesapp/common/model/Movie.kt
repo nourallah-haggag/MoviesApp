@@ -8,4 +8,4 @@ data class Movie(
     val overview: String,
     @Json(name = "poster_path") val image: String,
     val adult:Boolean
-)
+):IMainScreenModel

@@ -1,7 +1,6 @@
 package com.meetntrain.moviesapp.features.popular_movies.popular_movies
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -12,7 +11,7 @@ import com.meetntrain.moviesapp.common.model.IMainScreenModel
 import com.meetntrain.moviesapp.common.model.Movie
 import com.meetntrain.moviesapp.common.utils.toggleLoadingState
 import com.meetntrain.moviesapp.common.view_model.State
-import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
+import com.meetntrain.moviesapp.features.popular_movies.popular_movies.list.MoviesListAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview

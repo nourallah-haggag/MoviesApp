@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.meetntrain.moviesapp.R
 import com.meetntrain.moviesapp.common.model.IMainScreenModel
@@ -12,6 +13,7 @@ import com.meetntrain.moviesapp.common.model.Movie
 import com.meetntrain.moviesapp.common.utils.toggleLoadingState
 import com.meetntrain.moviesapp.common.view_model.State
 import com.meetntrain.moviesapp.features.popular_movies.popular_movies.list.MoviesListAdapter
+import com.meetntrain.moviesapp.features.popular_movies.popular_movies.list.view_holder.ItemTouchListenerCallback
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -68,9 +70,11 @@ class MoviesActivity : AppCompatActivity(), MoviesListAdapter.Interaction {
                 }
             }
         })
+        val itemTouchHelper = ItemTouchHelper(ItemTouchListenerCallback(moviesAdapter))
+        itemTouchHelper.attachToRecyclerView(rv_movies)
 
         this.moviesList = moviesList.toMutableList()
-        moviesAdapter.swapData(moviesList)
+        moviesAdapter.swapData(this.moviesList)
     }
 
     override fun remove(position: Int) {

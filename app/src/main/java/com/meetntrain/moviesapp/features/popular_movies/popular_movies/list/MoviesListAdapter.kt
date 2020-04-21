@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.meetntrain.moviesapp.R
 import com.meetntrain.moviesapp.common.model.Actor
 import com.meetntrain.moviesapp.common.model.IMainScreenModel
@@ -13,14 +14,22 @@ import com.meetntrain.moviesapp.common.model.Movie
 import com.meetntrain.moviesapp.features.popular_movies.popular_movies.list.view_holder.ActorsViewHolder
 import com.meetntrain.moviesapp.features.popular_movies.popular_movies.list.view_holder.BaseViewHolder
 import com.meetntrain.moviesapp.features.popular_movies.popular_movies.list.view_holder.MoviesViewHolder
+import java.util.*
 
 class MoviesListAdapter(private val interaction: Interaction? = null) :
     ListAdapter<IMainScreenModel, BaseViewHolder>(
         DC()
-    ) {
+    ), ItemTouchHelperListener {
 
     var scrollDirection =
         ScrollDirection.DOWN
+
+    private var data: MutableList<IMainScreenModel>
+
+    init {
+        data = currentList.toMutableList()
+    }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         if (viewType == R.layout.item_movie) {
@@ -95,5 +104,31 @@ class MoviesListAdapter(private val interaction: Interaction? = null) :
 
     enum class ScrollDirection {
         UP, DOWN
+    }
+
+    override fun onItemMoved(recycler: RecyclerView, fromPosition: Int, toPosition: Int): Boolean {
+        if (fromPosition < toPosition) {
+            for (i in fromPosition until toPosition) {
+                Collections.swap(data, i, i + 1)
+            }
+        } else {
+            for (i in fromPosition downTo toPosition) {
+                Collections.swap(data, i, i - 1)
+            }
+        }
+        notifyItemMoved(fromPosition, toPosition)
+        return true
+    }
+
+    override fun onItemDismiss(recycler: RecyclerView.ViewHolder, position: Int) {
+        interaction?.remove(position)
+    }
+
+    override fun onCurrentListChanged(
+        previousList: MutableList<IMainScreenModel>,
+        currentList: MutableList<IMainScreenModel>
+    ) {
+        data = currentList.toMutableList()
+        super.onCurrentListChanged(previousList, currentList)
     }
 }

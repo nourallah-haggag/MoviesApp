@@ -8,6 +8,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.meetntrain.moviesapp.R
+import com.meetntrain.moviesapp.common.model.IMainScreenModel
 import com.meetntrain.moviesapp.common.model.Movie
 import com.meetntrain.moviesapp.common.utils.toggleLoadingState
 import com.meetntrain.moviesapp.common.view_model.State
@@ -22,7 +23,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class MoviesActivity : AppCompatActivity(), MoviesListAdapter.Interaction {
 
     private val moviesViewModel: MoviesViewModel by viewModel()
-    private lateinit var moviesList: MutableList<Movie>
+    private lateinit var moviesList: MutableList<IMainScreenModel>
 
     // recycler view
     private lateinit var moviesAdapter: MoviesListAdapter
@@ -38,11 +39,10 @@ class MoviesActivity : AppCompatActivity(), MoviesListAdapter.Interaction {
                     loadingView = progress_bar
                 )
                 is State.PresentingState<*> -> {
-                    val data = state.data as List<Movie>
+                    val data = state.data as List<IMainScreenModel>
                     data.apply {
                         setupMoviesRecyclerView(this)
                     }
-                    Log.d("hi", data[0].overview)
                 }
             }
         })
@@ -51,7 +51,7 @@ class MoviesActivity : AppCompatActivity(), MoviesListAdapter.Interaction {
     }
 
     // recycler view setup
-    private fun setupMoviesRecyclerView(moviesList: List<Movie>) {
+    private fun setupMoviesRecyclerView(moviesList: List<IMainScreenModel>) {
         moviesAdapter =
             MoviesListAdapter(
                 this
@@ -80,7 +80,10 @@ class MoviesActivity : AppCompatActivity(), MoviesListAdapter.Interaction {
     }
 
     override fun addToFavs(position: Int) {
-        Toast.makeText(this, "${moviesList[position].title} added to favs", Toast.LENGTH_SHORT)
-            .show()
+        if (moviesList[position] is Movie) {
+            val movie = moviesList[position] as Movie
+            Toast.makeText(this, "${movie.title} added to favs", Toast.LENGTH_SHORT)
+                .show()
+        }
     }
 }

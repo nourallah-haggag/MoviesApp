@@ -13,14 +13,7 @@ import kotlinx.coroutines.flow.zip
 
 class MoviesRepo(private val moviesApi: MoviesApi) {
     @ExperimentalCoroutinesApi
-    suspend fun getMovies(): Flow<List<IMainScreenModel>> {
-        val moviesAndActorsList= mutableListOf<IMainScreenModel>()
-        return flowOf(moviesApi.getMoviesList().moviesList)
-            .zip(flowOf(moviesApi.getActorsList().actorList)){
-                movie , actor -> moviesAndActorsList.addAll(movie)
-                moviesAndActorsList.addAll(actor)
-                return@zip moviesAndActorsList
-            }
-
+    suspend fun getMovies(pageNo:Int): Flow<List<IMainScreenModel>> {
+        return flowOf(moviesApi.getPaginatedMovies(pageNo).moviesList)
     }
 }

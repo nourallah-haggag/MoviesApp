@@ -10,9 +10,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.meetntrain.moviesapp.R
 import com.meetntrain.moviesapp.common.model.Actor
 import com.meetntrain.moviesapp.common.model.IMainScreenModel
+import com.meetntrain.moviesapp.common.model.LoadingRecyclerModel
 import com.meetntrain.moviesapp.common.model.Movie
 import com.meetntrain.moviesapp.features.popular_movies.popular_movies.list.view_holder.ActorsViewHolder
 import com.meetntrain.moviesapp.features.popular_movies.popular_movies.list.view_holder.BaseViewHolder
+import com.meetntrain.moviesapp.features.popular_movies.popular_movies.list.view_holder.LoadingViewHolder
 import com.meetntrain.moviesapp.features.popular_movies.popular_movies.list.view_holder.MoviesViewHolder
 import java.util.*
 
@@ -24,12 +26,8 @@ class MoviesListAdapter(private val interaction: Interaction? = null) :
     var scrollDirection =
         ScrollDirection.DOWN
 
-    private var data: MutableList<IMainScreenModel>
-
-    init {
-        data = currentList.toMutableList()
-    }
-
+    private lateinit var data: MutableList<IMainScreenModel>
+    private var isLoading = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         if (viewType == R.layout.item_movie) {
@@ -38,10 +36,15 @@ class MoviesListAdapter(private val interaction: Interaction? = null) :
                 LayoutInflater.from(parent.context)
                     .inflate(R.layout.item_movie, parent, false), interaction
             )
-        } else {
+        } else if (viewType == R.layout.item_actor) {
             return ActorsViewHolder(
                 LayoutInflater.from(parent.context)
                     .inflate(R.layout.item_actor, parent, false), interaction
+            )
+        } else {
+            return LoadingViewHolder(
+                LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_loading, parent, false)
             )
         }
     }
@@ -51,7 +54,9 @@ class MoviesListAdapter(private val interaction: Interaction? = null) :
             return R.layout.item_movie
         } else if (getItem(position) is Actor) {
             return R.layout.item_actor
-        } else
+        } else if (getItem(position) is LoadingRecyclerModel)
+            return R.layout.item_loading
+        else
             throw IllegalArgumentException()
 
     }
@@ -61,8 +66,9 @@ class MoviesListAdapter(private val interaction: Interaction? = null) :
         holder.bind(getItem(position), scrollDirection)
     }
 
-    fun swapData(data: List<IMainScreenModel>) {
-        submitList(data.toMutableList())
+    fun swapData(data: MutableList<IMainScreenModel>) {
+        this.data = data
+        submitList(this.data)
     }
 
 
@@ -82,6 +88,8 @@ class MoviesListAdapter(private val interaction: Interaction? = null) :
             else
                 if (oldItem is Actor && newItem is Actor)
                     return oldItem.name == newItem.name
+                else if (oldItem is LoadingRecyclerModel == newItem is LoadingRecyclerModel)
+                    return oldItem == newItem
                 else
                     return false
         }
@@ -130,5 +138,20 @@ class MoviesListAdapter(private val interaction: Interaction? = null) :
     ) {
         data = currentList.toMutableList()
         super.onCurrentListChanged(previousList, currentList)
+    }
+
+    fun addLoadingView() {
+        val loadingView = LoadingRecyclerModel()
+        data.add(loadingView)
+        swapData(data)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    @ExperimentalStdlibApi
+    fun removeLoadingView() {
+        if (this::data.isInitialized) {
+            data.removeIf { item -> item is LoadingRecyclerModel }
+            swapData(data)
+        }
     }
 }

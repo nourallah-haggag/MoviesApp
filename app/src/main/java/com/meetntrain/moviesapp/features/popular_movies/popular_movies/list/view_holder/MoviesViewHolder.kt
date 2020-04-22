@@ -36,7 +36,9 @@ class MoviesViewHolder(
                 tv_title.text = item.title
                 tv_overview.text = item.overview
                 tv_vote.text = item.voteAverage
-                Glide.with(context).load(Constants.IMAGE_SERVER + item.image).into(iv_movie_icon)
+                item.image?.let {
+                    Glide.with(context).load(Constants.IMAGE_SERVER + it).into(iv_movie_icon)
+                }
                 iv_film_status.apply {
                     if (item.voteAverage.toDouble() < 8) {
                         setImageDrawable(context.getDrawable(R.drawable.ic_poop))

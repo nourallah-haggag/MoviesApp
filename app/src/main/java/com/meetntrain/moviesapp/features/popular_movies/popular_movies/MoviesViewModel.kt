@@ -24,9 +24,9 @@ class MoviesViewModel(private val repo: MoviesRepo) : ViewModel() {
         consumeViewUpdates(channel)
     }
 
-    fun getAllMovies() {
+    fun getAllMovies(pageNo: Int) {
         viewModelScope.launchViewModelCoroutineWithLoading(
-            apiCall = suspend { repo.getMovies() },
+            apiCall = suspend { repo.getMovies(pageNo) },
             channel = channel
         )
     }

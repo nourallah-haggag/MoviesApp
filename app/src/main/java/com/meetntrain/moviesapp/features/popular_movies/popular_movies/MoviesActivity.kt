@@ -1,5 +1,6 @@
 package com.meetntrain.moviesapp.features.popular_movies.popular_movies
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +13,7 @@ import com.meetntrain.moviesapp.common.model.IMainScreenModel
 import com.meetntrain.moviesapp.common.model.Movie
 import com.meetntrain.moviesapp.common.utils.toggleLoadingState
 import com.meetntrain.moviesapp.common.view_model.State
+import com.meetntrain.moviesapp.features.popular_movies.paginated_movies.PaginatedMoviesActivity
 import com.meetntrain.moviesapp.features.popular_movies.popular_movies.list.MoviesListAdapter
 import com.meetntrain.moviesapp.features.popular_movies.popular_movies.list.view_holder.ItemTouchListenerCallback
 import kotlinx.android.synthetic.main.activity_main.*
@@ -32,6 +34,11 @@ class MoviesActivity : AppCompatActivity(), MoviesListAdapter.Interaction {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        btn_goto_paginated.setOnClickListener {
+            val intent = Intent(this, PaginatedMoviesActivity::class.java)
+            startActivity(intent)
+        }
 
         moviesViewModel.channelLiveData.observe(this, Observer { state ->
             when (state) {

@@ -22,7 +22,9 @@ class ActorsViewHolder(
             if (item is Actor) {
                 tv_actor.text = item.name + " " + item.knownFor
                 iv_actor_icon.apply {
-                    Glide.with(context).load(Constants.IMAGE_SERVER + item.img).into(this)
+                    item.img?.let {
+                        Glide.with(context).load(Constants.IMAGE_SERVER + it).into(this)
+                    }
 
                 }
                 animateView(this, scrollDirection = scrollDirection)

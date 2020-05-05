@@ -1,4 +1,4 @@
-package com.meetntrain.moviesapp.features.popular_movies.popular_movies.list
+package com.meetntrain.moviesapp.popular_movies.list
 
 import androidx.recyclerview.widget.RecyclerView
 

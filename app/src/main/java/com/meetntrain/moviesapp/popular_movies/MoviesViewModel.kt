@@ -1,4 +1,4 @@
-package com.meetntrain.moviesapp.features.popular_movies.paginated_movies
+package com.meetntrain.moviesapp.popular_movies
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,18 +15,15 @@ import kotlinx.coroutines.launch
 
 @FlowPreview
 @ExperimentalCoroutinesApi
-class PaginatedMoviesViewModel(private val repo: MoviesRepo) : ViewModel() {
-    //TODO: handle errors
+class MoviesViewModel(private val repo: MoviesRepo) : ViewModel() {
+
     private val channel: ConflatedBroadcastChannel<State> = ConflatedBroadcastChannel()
     val channelLiveData = MutableLiveData<State>()
 
-    init {
+    fun getAllMovies() {
         consumeViewUpdates(channel)
-    }
-
-    fun getAllMovies(pageNo: Int) {
         viewModelScope.launchViewModelCoroutineWithLoading(
-            apiCall = suspend { repo.getPaginatedMovies(pageNo = pageNo) },
+            apiCall = suspend { repo.getMovies() },
             channel = channel
         )
     }
@@ -39,5 +36,6 @@ class PaginatedMoviesViewModel(private val repo: MoviesRepo) : ViewModel() {
         }
 
     }
+
 
 }

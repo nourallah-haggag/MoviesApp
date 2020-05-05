@@ -15,8 +15,8 @@ class MoviesRepo(private val moviesApi: MoviesApi) {
     @ExperimentalCoroutinesApi
     suspend fun getMovies(): Flow<List<IMainScreenModel>> {
         val moviesAndActorsList = mutableListOf<IMainScreenModel>()
-        return flowOf(moviesApi.getMoviesList().moviesList)
-            .zip(flowOf(moviesApi.getActorsList().actorList)) { movie, actor ->
+        return flowOf(moviesApi.getMoviesList().moviesList).flowOn(Dispatchers.IO)
+            .zip(flowOf(moviesApi.getActorsList().actorList).flowOn(Dispatchers.IO)) { movie, actor ->
                 moviesAndActorsList.addAll(movie)
                 moviesAndActorsList.addAll(actor)
                 return@zip moviesAndActorsList
@@ -24,6 +24,7 @@ class MoviesRepo(private val moviesApi: MoviesApi) {
 
     }
 
+    @ExperimentalCoroutinesApi
     suspend fun getPaginatedMovies(pageNo: Int) =
-        flowOf(moviesApi.getPaginatedMovies(pageNo = pageNo).moviesList)
+        flowOf(moviesApi.getPaginatedMovies(pageNo = pageNo).moviesList).flowOn(Dispatchers.IO)
 }

@@ -1,21 +1,19 @@
-package com.meetntrain.moviesapp.features.popular_movies.popular_movies
+package com.meetntrain.moviesapp.popular_movies
 
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.meetntrain.moviesapp.R
+import com.meetntrain.moviesapp.common.activity.BaseActivity
 import com.meetntrain.moviesapp.common.model.IMainScreenModel
 import com.meetntrain.moviesapp.common.model.Movie
 import com.meetntrain.moviesapp.common.utils.toggleLoadingState
-import com.meetntrain.moviesapp.common.view_model.State
-import com.meetntrain.moviesapp.features.popular_movies.paginated_movies.PaginatedMoviesActivity
-import com.meetntrain.moviesapp.features.popular_movies.popular_movies.list.MoviesListAdapter
-import com.meetntrain.moviesapp.features.popular_movies.popular_movies.list.view_holder.ItemTouchListenerCallback
+import com.meetntrain.moviesapp.paginated_movies.PaginatedMoviesActivity
+import com.meetntrain.moviesapp.popular_movies.list.MoviesListAdapter
+import com.meetntrain.moviesapp.popular_movies.list.view_holder.ItemTouchListenerCallback
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -23,7 +21,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @ExperimentalCoroutinesApi
 @FlowPreview
-class MoviesActivity : AppCompatActivity(), MoviesListAdapter.Interaction {
+class MoviesActivity : BaseActivity(), MoviesListAdapter.Interaction {
 
     private val moviesViewModel: MoviesViewModel by viewModel()
     private lateinit var moviesList: MutableList<IMainScreenModel>
@@ -40,23 +38,20 @@ class MoviesActivity : AppCompatActivity(), MoviesListAdapter.Interaction {
             startActivity(intent)
         }
 
-        moviesViewModel.channelLiveData.observe(this, Observer { state ->
-            when (state) {
-                is State.LoadingState -> toggleLoadingState(
-                    isLoading = state.isLoading,
-                    loadingView = progress_bar
-                )
-                is State.PresentingState<*> -> {
-                    val data = state.data as List<IMainScreenModel>
-                    data.apply {
-                        setupMoviesRecyclerView(this)
-                    }
-                }
-            }
-        })
         moviesViewModel.getAllMovies()
-
+        observeMovie<List<Movie>>(
+            liveData = moviesViewModel.channelLiveData,
+            success = { movies ->
+                setupMoviesRecyclerView(movies)
+            },
+            loading = { isLoading ->
+                toggleLoadingState(isLoading = isLoading, loadingView = progress_bar)
+                Toast.makeText(this, "loading", Toast.LENGTH_SHORT).show()
+            }, error = {
+                //TODO: handle error
+            })
     }
+
 
     // recycler view setup
     private fun setupMoviesRecyclerView(moviesList: List<IMainScreenModel>) {

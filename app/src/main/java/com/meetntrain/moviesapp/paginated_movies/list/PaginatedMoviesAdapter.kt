@@ -1,6 +1,5 @@
-package com.meetntrain.moviesapp.features.popular_movies.paginated_movies.list
+package com.meetntrain.moviesapp.paginated_movies.list
 
-import android.text.Layout
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView

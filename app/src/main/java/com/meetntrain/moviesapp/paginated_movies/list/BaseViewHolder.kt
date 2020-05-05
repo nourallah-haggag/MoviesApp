@@ -1,4 +1,4 @@
-package com.meetntrain.moviesapp.features.popular_movies.paginated_movies.list
+package com.meetntrain.moviesapp.paginated_movies.list
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView

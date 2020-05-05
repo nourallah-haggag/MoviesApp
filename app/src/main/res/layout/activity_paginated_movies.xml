@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".features.popular_movies.paginated_movies.PaginatedMoviesActivity">
+    tools:context=".paginated_movies.PaginatedMoviesActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_paginated_movies"

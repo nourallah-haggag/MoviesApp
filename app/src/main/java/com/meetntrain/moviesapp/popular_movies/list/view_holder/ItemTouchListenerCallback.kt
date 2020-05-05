@@ -1,8 +1,8 @@
-package com.meetntrain.moviesapp.features.popular_movies.popular_movies.list.view_holder
+package com.meetntrain.moviesapp.popular_movies.list.view_holder
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.meetntrain.moviesapp.features.popular_movies.popular_movies.list.ItemTouchHelperListener
+import com.meetntrain.moviesapp.popular_movies.list.ItemTouchHelperListener
 
 class ItemTouchListenerCallback(private val listener: ItemTouchHelperListener) :
     ItemTouchHelper.Callback() {

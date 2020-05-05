@@ -1,4 +1,4 @@
-package com.meetntrain.moviesapp.features.popular_movies.popular_movies.list.view_holder
+package com.meetntrain.moviesapp.popular_movies.list.view_holder
 
 import android.view.View
 import android.view.animation.Animation
@@ -7,7 +7,7 @@ import com.bumptech.glide.Glide
 import com.meetntrain.moviesapp.R
 import com.meetntrain.moviesapp.common.Constants
 import com.meetntrain.moviesapp.common.model.Actor
-import com.meetntrain.moviesapp.features.popular_movies.popular_movies.list.MoviesListAdapter
+import com.meetntrain.moviesapp.popular_movies.list.MoviesListAdapter
 import kotlinx.android.synthetic.main.item_actor.view.*
 
 class ActorsViewHolder(
